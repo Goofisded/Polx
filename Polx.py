@@ -1,5 +1,7 @@
+
 import os
 import requests
+import threading
 
 def print_banner():
     banner = """
@@ -25,7 +27,7 @@ def check_subdomains(url, subdomains_file):
 
         found_links = []
 
-        for subdomain in subdomains:
+        def check_subdomain(subdomain):
             full_url = f"http://{subdomain}.{url}"
             try:
                 response = requests.get(full_url)
@@ -34,6 +36,15 @@ def check_subdomains(url, subdomains_file):
                     print(full_url, "[Found]")
             except requests.ConnectionError:
                 pass 
+
+        for subdomain in subdomains:
+            thread = threading.Thread(target=check_subdomain, args=(subdomain,))
+            thread.start()
+
+        for thread in threading.enumerate():
+            if thread is threading.main_thread():
+                continue
+            thread.join()
 
         with open(f"{url}_Subdomains.txt", 'w') as output_file:
             for found_link in found_links:
