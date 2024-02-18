@@ -6,6 +6,7 @@ The subdomains.txt has a lot of subdomains and you can add more if you want.
 
 # Installation
 pip install requests
+
 pip install threaded
 
 
